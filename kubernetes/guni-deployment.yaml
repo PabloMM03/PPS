@@ -1,0 +1,29 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polls-app
+  labels:
+    app: djangoblog
+spec:
+	replicas: 2
+  selector:
+    matchLabels:
+      app: djangoblog
+  template:
+    metadata:
+      labels:
+        app: djangoblog
+    spec:
+      containers:
+          image: django_image_pps
+          - command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000
+          name: polls
+          envFrom:
+          - secretRef:
+              name: polls-secret
+          - configMapRef:
+              name: polls-config
+          ports:
+            - containerPort: 8000
+              name: gunicorn
